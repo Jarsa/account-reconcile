@@ -205,6 +205,7 @@ class MassReconcileAdvanced(models.AbstractModel):
         ]
 
     def _action_rec(self):
+        self.flush()
         credit_lines = self._query_credit()
         debit_lines = self._query_debit()
         result = self._rec_auto_lines_advanced(credit_lines, debit_lines)
@@ -222,36 +223,33 @@ class MassReconcileAdvanced(models.AbstractModel):
         """ Advanced reconciliation main loop """
         # pylint: disable=invalid-commit
         reconciled_ids = []
-        for rec in self:
-            reconcile_groups = []
-            ctx = self.env.context.copy()
-            ctx["commit_every"] = rec.account_id.company_id.reconciliation_commit_every
-            _logger.info("%d credit lines to reconcile", len(credit_lines))
-            for idx, credit_line in enumerate(credit_lines, start=1):
-                if idx % 50 == 0:
-                    _logger.info(
-                        "... %d/%d credit lines inspected ...", idx, len(credit_lines)
+        reconcile_groups = []
+        _logger.info("%d credit lines to reconcile", len(credit_lines))
+        for idx, credit_line in enumerate(credit_lines, start=1):
+            if idx % 50 == 0:
+                _logger.info(
+                    "... %d/%d credit lines inspected ...", idx, len(credit_lines)
+                )
+            if self._skip_line(credit_line):
+                continue
+            opposite_lines = self._search_opposites(credit_line, debit_lines)
+            if not opposite_lines:
+                continue
+            opposite_ids = [line["id"] for line in opposite_lines]
+            line_ids = opposite_ids + [credit_line["id"]]
+            for group in reconcile_groups:
+                if any([lid in group for lid in opposite_ids]):
+                    _logger.debug(
+                        "New lines %s matched with an existing " "group %s",
+                        line_ids,
+                        group,
                     )
-                if self._skip_line(credit_line):
-                    continue
-                opposite_lines = self._search_opposites(credit_line, debit_lines)
-                if not opposite_lines:
-                    continue
-                opposite_ids = [l["id"] for l in opposite_lines]
-                line_ids = opposite_ids + [credit_line["id"]]
-                for group in reconcile_groups:
-                    if any([lid in group for lid in opposite_ids]):
-                        _logger.debug(
-                            "New lines %s matched with an existing " "group %s",
-                            line_ids,
-                            group,
-                        )
-                        group.update(line_ids)
-                        break
-                else:
-                    _logger.debug("New group of lines matched %s", line_ids)
-                    reconcile_groups.append(set(line_ids))
-            lines_by_id = {l["id"]: l for l in credit_lines + debit_lines}
+                    group.update(line_ids)
+                    break
+            else:
+                _logger.debug("New group of lines matched %s", line_ids)
+                reconcile_groups.append(set(line_ids))
+            lines_by_id = {line["id"]: line for line in credit_lines + debit_lines}
             _logger.info("Found %d groups to reconcile", len(reconcile_groups))
             for group_count, reconcile_group_ids in enumerate(
                 reconcile_groups, start=1
@@ -269,7 +267,10 @@ class MassReconcileAdvanced(models.AbstractModel):
                 if reconciled and full:
                     reconciled_ids += reconcile_group_ids
 
-                if ctx["commit_every"] and group_count % ctx["commit_every"] == 0:
+                if (
+                    self.env.context.get("commit_every", 0)
+                    and group_count % self.env.context["commit_every"] == 0
+                ):
                     self.env.cr.commit()
                     _logger.info(
                         "Commit the reconciliations after %d groups", group_count
