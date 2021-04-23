@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record model="ir.ui.view" id="account_manual_reconciliation_form">
+        <field name="name">account_manual_reconciliation.form</field>
+        <field name="model">account.manual.reconciliation</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="reconcile" string="Reconcile" type="object"/>
+                </header>
+                    <group>
+                        <group string="Account Moves">
+                            <field name="move_line_ids" nolabel="1"  readonly="1">
+                                <tree editable="bottom">
+                                    <button name="select_line" string="Select" type="object" icon="fa-plus"/>
+                                    <field name="name"/>
+                                    <field name="date"/>
+                                    <field name="ref" optional="hide"/>
+                                    <field name="note" optional="hide"/>
+                                    <field name="amount"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group string="Statement Lines">
+                            <field name="statement_line_ids" nolabel="1"  readonly="1">
+                                <tree editable="bottom">
+                                    <button name="select_line" string="Select" type="object" icon="fa-plus"/>
+                                    <field name="name"/>
+                                    <field name="date"/>
+                                    <field name="ref" optional="hide"/>
+                                    <field name="note" optional="hide"/>
+                                    <field name="amount"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Selected Account Moves">
+                            <field name="selected_move_line_ids" nolabel="1"  readonly="1">
+                                <tree editable="bottom">
+                                    <button name="select_line" string="Select" type="object" icon="fa-plus"/>
+                                    <field name="name"/>
+                                    <field name="date"/>
+                                    <field name="ref" optional="hide"/>
+                                    <field name="note" optional="hide"/>
+                                    <field name="amount" sum="Total"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group string="Selected Statement Lines">
+                            <field name="selected_statement_line_ids" nolabel="1"  readonly="1">
+                                <tree editable="bottom">
+                                    <button name="select_line" string="Select" type="object" icon="fa-plus"/>
+                                    <field name="name"/>
+                                    <field name="date"/>
+                                    <field name="ref" optional="hide"/>
+                                    <field name="note" optional="hide"/>
+                                    <field name="amount" sum="Total"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </group>
+            </form>
+        </field>
+    </record>
+    <record id="action_account_manual_reconciliation" model="ir.actions.act_window">
+        <field name="name">account.manual.reconciliation</field>
+        <field name="res_model">account.manual.reconciliation</field>
+        <field name="view_mode">form</field>
+    </record>
+</odoo>
