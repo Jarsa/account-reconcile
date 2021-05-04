@@ -36,83 +36,64 @@ class AccountBankReconciliationDifferenceWizard(models.TransientModel):
         compare = float_compare(self.amount, sum_move, precision_digits=5, precision_rounding=None)
         if compare != 0:
             raise UserError(_('the amount is different, please checks amounts'))
-        statement_line_ids = self.statement_line_ids.statement_line_id
+        statement_line_id = self.statement_line_ids.statement_line_id
+        currency_id = statement_line_id.currency_id and statement_line_id.currency_id.id or self.env.company.currency_id.id
         data = {
             'type': 'entry',
-            'journal_id': statement_line_ids.journal_id.id,
-            'currency_id': statement_line_ids.currency_id.id,
-            'date': statement_line_ids.date,
-            'partner_id': statement_line_ids.partner_id and statement_line_ids.partner_id.id or False,
-            'ref': statement_line_ids.ref,
+            'journal_id': statement_line_id.journal_id.id,
+            'currency_id': currency_id,
+            'date': statement_line_id.date,
+            'partner_id': statement_line_id.partner_id and statement_line_id.partner_id.id or False,
+            'ref': statement_line_id.ref,
+            'line_ids': [],
         }
-        move = self.env['account.move'].with_context(default_journal_id=data['journal_id']).create(data)
         payment_methods = (
             (self.amount > 0) and
-            statement_line_ids.journal_id.inbound_payment_method_ids or
-            statement_line_ids.journal_id.outbound_payment_method_ids
+            statement_line_id.journal_id.inbound_payment_method_ids or
+            statement_line_id.journal_id.outbound_payment_method_ids
         )
         data_payment = {
-                    'payment_method_id': payment_methods[0].id,
-                    'payment_type': self.amount > 0 and 'inbound' or 'outbound',
-                    'partner_id': statement_line_ids.partner_id.id,
-                    'partner_type': statement_line_ids.account_id.user_type_id.name,
-                    'journal_id': statement_line_ids.journal_id.id,
-                    'payment_date': statement_line_ids.date,
-                    'state': 'reconciled',
-                    'currency_id': statement_line_ids.currency_id.id,
-                    'amount': abs(self.amount),
-                    'communication': statement_line_ids.ref,
-                    'name': statement_line_ids.name or _("Bank Statement %s") % statement_line_ids.date,
-                }
-        payment = self.env['account.payment'].create(data_payment)
-        aml = self.env['account.move.line']
-        account_id = self.amount >= 0 \
-            and self.statement_id.journal_id.default_credit_account_id.id \
-            or self.statement_id.journal_id.default_debit_account_id.id
-        aml_account = {
-                'name': statement_line_ids.name,
-                'partner_id': self.partner_id and self.partner_id.id or False,
-                'account_id': account_id.id,
-                'credit': self.amount < 0 and -self.amount or 0.0,
-                'debit': self.amount > 0 and self.amount or 0.0,
-                'statement_line_id': statement_line_ids.id,
-                'statement_id': statement_line_ids.statement_id.id,
-                'currency_id': statement_line_ids.statement_currency.id,
-                'amount_currency': self.amount,
-                'move_id': move.id,
-                'move_name': move.name,
-                'payment_id': payment.id
+            'payment_method_id': payment_methods[0].id,
+            'payment_type': self.amount > 0 and 'inbound' or 'outbound',
+            'partner_id': statement_line_id.partner_id.id,
+            'partner_type': statement_line_id.account_id.user_type_id.name,
+            'journal_id': statement_line_id.journal_id.id,
+            'payment_date': statement_line_id.date,
+            'state': 'reconciled',
+            'currency_id': currency_id,
+            'amount': abs(self.amount),
+            'communication': statement_line_id.ref,
+            'name': statement_line_id.name or _("Bank Statement %s") % statement_line_ids.date,
         }
-        aml.create(aml_account)
+        payment = self.env['account.payment'].create(data_payment)
+        account_id = self.amount >= 0 \
+            and statement_line_id.statement_id.journal_id.default_credit_account_id.id \
+            or statement_line_id.statement_id.journal_id.default_debit_account_id.id
+        data['line_ids'].append((0, 0, {
+            'name': statement_line_id.name,
+            'partner_id': statement_line_id.partner_id and statement_line_id.partner_id.id or False,
+            'account_id': account_id,
+            'credit': self.amount < 0 and -self.amount or 0.0,
+            'debit': self.amount > 0 and self.amount or 0.0,
+            'statement_line_id': statement_line_id.id,
+            'statement_id': statement_line_id.statement_id.id,
+            'payment_id': payment.id
+        }))
         for line in self.line_ids:
-            aml_dict = {
+            data['line_ids'].append((0, 0, {
                 'name': line.name,
-                'partner_id': self.partner_id and self.partner_id.id or False,
-                'account_id': line.account_id,
-                'analytic_account_id': line.account_analytic_id,
-                'credit': line.amount < 0 and -line.amount or 0.0,
-                'debit': line.amount > 0 and line.amount or 0.0,
-                'statement_line_id': statement_line_ids.id,
-                'statement_id': statement_line_ids.statement_id.id,
-                'currency_id': statement_line_ids.statement_currency.id,
-                'amount_currency': self.amount,
-                'move_id': move.id,
-                'move_name': move.name,
+                'partner_id': statement_line_id.partner_id and statement_line_id.partner_id.id or False,
+                'account_id': line.account_id.id,
+                'analytic_account_id': line.account_analytic_id.id,
+                'credit': line.amount > 0 and line.amount or 0.0,
+                'debit': line.amount < 0 and -line.amount or 0.0,
+                'statement_line_id': statement_line_id.id,
+                'statement_id': statement_line_id.statement_id.id,
                 'payment_id': payment.id
-            }
-            aml.create(aml_dict)
-        for rem in self.move_line_ids:
-            rem.reconciliation_id.write({
-                    'selected_statement_line_ids': [(2, rem.id, 0)]
-                })
-        # for remove_move in self:
-        #    remove_move.move_line_ids.write({
-        #            'id': [(2, remove_move.move_line_ids.id, 0)]
-        #        })
-        for remove_statement in self:
-            remove_statement.statement_line_ids.write({
-                    'id': [(2, remove_statement.statement_line_ids.id, 0)]
-                })
+            }))
+        move = self.env['account.move'].with_context(default_journal_id=data['journal_id']).create(data)
+        self.move_line_ids.unlink()
+        self.statement_line_ids.unlink()
 
 
 class AccountBankReconciliationDifferenceLineWizard(models.TransientModel):
