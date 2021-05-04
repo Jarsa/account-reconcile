@@ -12,6 +12,7 @@
     "data": [
         "views/account_manual_reconciliation_view.xml",
         "wizards/account_manual_reconciliation_wizard_view.xml",
+        "wizards/account_bank_reconciliation_difference_wizard_view.xml",
     ],
     "license": "LGPL-3",
     "installable": True,

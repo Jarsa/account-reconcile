@@ -8,8 +8,8 @@
                 <header>
                     <button name="reconcile" string="Reconcile" type="object"/>
                 </header>
-                    <group>
-                        <group string="Account Moves">
+                    <group colspan="2">
+                        <group string="Account Moves" colspan="1">
                             <field name="move_line_ids" nolabel="1"  readonly="1">
                                 <tree editable="bottom">
                                     <button name="select_line" string="Select" type="object" icon="fa-plus"/>
@@ -21,7 +21,7 @@
                                 </tree>
                             </field>
                         </group>
-                        <group string="Statement Lines">
+                        <group string="Statement Lines" colspan="1">
                             <field name="statement_line_ids" nolabel="1"  readonly="1">
                                 <tree editable="bottom">
                                     <button name="select_line" string="Select" type="object" icon="fa-plus"/>
@@ -34,8 +34,8 @@
                             </field>
                         </group>
                     </group>
-                    <group>
-                        <group string="Selected Account Moves">
+                    <group class="col-12">
+                        <group string="Selected Account Moves" class="col-6">
                             <field name="selected_move_line_ids" nolabel="1"  readonly="1">
                                 <tree editable="bottom">
                                     <button name="select_line" string="Select" type="object" icon="fa-plus"/>
@@ -47,7 +47,7 @@
                                 </tree>
                             </field>
                         </group>
-                        <group string="Selected Statement Lines">
+                        <group string="Selected Statement Lines" class="col-6">
                             <field name="selected_statement_line_ids" nolabel="1"  readonly="1">
                                 <tree editable="bottom">
                                     <button name="select_line" string="Select" type="object" icon="fa-plus"/>
@@ -58,6 +58,12 @@
                                     <field name="amount" sum="Total"/>
                                 </tree>
                             </field>
+                        </group>
+                    </group>
+                    <group colspan="3">
+                        <group colspan="1"></group>
+                        <group colspan="1">
+                            <button name="reconcile" string="Reconcile" type="object"/>
                         </group>
                     </group>
             </form>

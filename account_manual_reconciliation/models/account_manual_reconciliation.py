@@ -1,6 +1,8 @@
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
 
-from odoo import api, fields, models
+from odoo import api, fields, models, _
+from odoo.exceptions import UserError
+from odoo.tools import float_compare
 
 
 class AccountManualReconciliation(models.TransientModel):
@@ -67,6 +69,73 @@ class AccountManualReconciliation(models.TransientModel):
         res['move_line_ids'] = move_line_ids
         return res
 
+    def reconcile(self):
+        for rec in self:
+            if len(rec.selected_statement_line_ids) > 1:
+                raise UserError(_('A selected move line was already reconciled.'))
+            sum_statement = sum(rec.selected_statement_line_ids.mapped('amount'))
+            sum_move = sum(rec.selected_move_line_ids.mapped('amount'))
+            compare = float_compare(sum_statement, sum_move, precision_digits=5, precision_rounding=None)
+            # ipdb.set_trace()
+            if compare != 0:
+                difference = sum_statement - sum_move
+                context = rec._context.copy()
+                context.update({
+                    'amount': difference,
+                    'statement_lines': rec.selected_statement_line_ids[0].id,
+                    'move_lines': rec.selected_move_line_ids.ids[0],
+                })
+                for statement in rec.selected_statement_line_ids:
+                    statement.statement_line_id.write({
+                        'move_name': rec.selected_move_line_ids.move_line_id[0].name,
+                        'sequence': len(rec.selected_move_line_ids)
+                    })
+                for move in rec.selected_move_line_ids:
+                    stateme = rec.selected_statement_line_ids.statement_line_id[0]
+                    move.move_line_id.write({
+                        'statement_line_id': stateme.id,
+                        'statement_id': stateme.statement_id.id
+                    })
+                    payment = move.move_line_id.payment_id
+                    if payment:
+                        payment.write({
+                            'state': 'reconciled'
+                        })
+                return {
+                    'name': ('Manual Reconciliation'),
+                    'res_model': 'account.bank.reconciliation.difference.wizard',
+                    'view_mode': 'form',
+                    'view_id': self.env.ref(
+                        'account_manual_reconciliation.'
+                        'account_bank_reconciliation_difference_wizard_view'
+                    ).id,
+                    'context': context,
+                    'target': 'new',
+                    'type': 'ir.actions.act_window',
+                }
+            for statement in rec.selected_statement_line_ids:
+                statement.statement_line_id.write({
+                    'move_name': rec.selected_move_line_ids.move_line_id[0].name,
+                    'sequence': len(rec.selected_move_line_ids)
+                })
+                rec.write({
+                    'selected_statement_line_ids': [(2, statement.id, 0)]
+                })
+            for move in rec.selected_move_line_ids:
+                stateme = rec.selected_statement_line_ids.statement_line_id[0]
+                move.move_line_id.write({
+                    'statement_line_id': stateme.id,
+                    'statement_id': stateme.statement_id.id
+                })
+                payment = move.move_line_id.payment_id
+                if payment:
+                    payment.write({
+                        'state': 'reconciled'
+                    })
+                rec.write({
+                    'selected_move_line_ids': [(2, move.id, 0)]
+                })
+
 
 class AccounReconcileStatementLine(models.TransientModel):
     _name = 'account.reconciliation.statement.line'
@@ -115,7 +184,7 @@ class AccounReconcileStatementLine(models.TransientModel):
                     'currency_id': rec.currency_id.id,
                 })]
             })
-            
+
 
 class AccounReconcileMoveLine(models.TransientModel):
     _name = 'account.reconciliation.move.line'
