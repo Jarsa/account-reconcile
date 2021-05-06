@@ -26,6 +26,17 @@ class AccountManualReconciliation(models.TransientModel):
         inverse_name='reconciliation_id',
     )
 
+    difference = fields.Float(
+        compute='_compute_dfference_selected'
+    )
+
+    @api.depends('selected_move_line_ids', 'selected_statement_line_ids')
+    def _compute_dfference_selected(self):
+        for rec in self:
+            sum_statement = sum(rec.selected_statement_line_ids.mapped('amount'))
+            sum_move = sum(rec.selected_move_line_ids.mapped('amount'))
+            rec.difference = sum_move - sum_statement
+
     @api.model
     def default_get(self, fields_list):
         res = super().default_get(fields_list)
@@ -76,7 +87,6 @@ class AccountManualReconciliation(models.TransientModel):
             sum_statement = sum(rec.selected_statement_line_ids.mapped('amount'))
             sum_move = sum(rec.selected_move_line_ids.mapped('amount'))
             compare = float_compare(sum_statement, sum_move, precision_digits=5, precision_rounding=None)
-            # ipdb.set_trace()
             if compare != 0:
                 difference = sum_statement - sum_move
                 context = rec._context.copy()
@@ -113,6 +123,7 @@ class AccountManualReconciliation(models.TransientModel):
                     'target': 'new',
                     'type': 'ir.actions.act_window',
                 }
+            stateme = rec.selected_statement_line_ids.statement_line_id[0]
             for statement in rec.selected_statement_line_ids:
                 statement.statement_line_id.write({
                     'move_name': rec.selected_move_line_ids.move_line_id[0].name,
@@ -122,7 +133,6 @@ class AccountManualReconciliation(models.TransientModel):
                     'selected_statement_line_ids': [(2, statement.id, 0)]
                 })
             for move in rec.selected_move_line_ids:
-                stateme = rec.selected_statement_line_ids.statement_line_id[0]
                 move.move_line_id.write({
                     'statement_line_id': stateme.id,
                     'statement_id': stateme.statement_id.id

@@ -61,7 +61,9 @@
                         </group>
                     </group>
                     <group colspan="3">
-                        <group colspan="1"></group>
+                        <group colspan="1">
+                            <field name="difference"/>
+                        </group>
                         <group colspan="1">
                             <button name="reconcile" string="Reconcile" type="object"/>
                         </group>
