@@ -54,7 +54,7 @@ class AccountManualReconciliation(models.TransientModel):
             absl.date <= %s AND
             absl.journal_id = %s AND
             aml.statement_line_id IS NULL
-        ORDER BY absl.date
+        ORDER BY absl.amount
 
         """, (date, journal_id))
         statement_lines = [(0, 0, line) for line in self.env.cr.dictfetchall()]
@@ -71,7 +71,7 @@ class AccountManualReconciliation(models.TransientModel):
             aml.account_id = %s AND
             aml.statement_line_id IS NULL AND
             am.state = 'posted'
-        ORDER BY aml.date
+        ORDER BY aml.balance
 
         """, (date, journal.default_debit_account_id.id, ))
         move_line_ids = [(0, 0, line) for line in self.env.cr.dictfetchall()]
@@ -80,13 +80,133 @@ class AccountManualReconciliation(models.TransientModel):
         res['move_line_ids'] = move_line_ids
         return res
 
+    def call_wizard(self, context):
+        return {
+            'name': ('Manual Reconciliation'),
+            'res_model': 'account.bank.reconciliation.difference.wizard',
+            'view_mode': 'form',
+            'view_id': self.env.ref(
+                'account_manual_reconciliation.'
+                'account_bank_reconciliation_difference_wizard_view'
+            ).id,
+            'context': context,
+            'target': 'new',
+            'type': 'ir.actions.act_window',
+        }
+
+    def cancel_moves(self):
+        for move in self.selected_move_line_ids:
+            move.move_line_id.move_id.write({
+                'state': 'cancel'
+            })
+            self.write({'selected_move_line_ids': [(2, move.id, 0)]})
+
+    def statement_reconcilie(self):
+        for state in self.selected_statement_line_ids:
+            context = self._context.copy()
+            context.update({
+                    'amount': state.amount,
+                    'statement_lines': state.id,
+                    'partner': True
+                    # 'move_lines': state.selected_move_line_ids.ids[0],
+                })
+            return {
+                'name': ('Manual Reconciliation'),
+                'res_model': 'account.bank.reconciliation.difference.wizard',
+                'view_mode': 'form',
+                'view_id': self.env.ref(
+                    'account_manual_reconciliation.'
+                    'account_bank_reconciliation_difference_wizard_view'
+                ).id,
+                'context': context,
+                'target': 'new',
+                'type': 'ir.actions.act_window',
+            }
+
+    def statement_reconcilie_move_update(self):
+        move = self.selected_move_line_ids.move_line_id
+        balance = move.balance / len(self.selected_statement_line_ids)
+        move.move_id['line_ids'].append((1, move.id, {
+            'credit': balance < 0 and -balance or 0.0,
+            'debit': balance > 0 and balance or 0.0,
+        }))
+        for statement in self.selected_statement_line_ids:
+            move.move_id['line_ids'].append((0, 0, {
+                 'name': move.name,
+                 'partner_id': move.partner_id.id,
+                 'account_id': move.account_id.id,
+                 'credit': balance < 0 and -balance or 0.0,
+                 'debit': balance > 0 and balance or 0.0,
+                 'statement_line_id': statement.id,
+                 'statement_id': statement.statement_id.id,
+                 'payment_id': move.payment_id.id
+            }))
+
+    def conciliaci(self):
+        len_state = len(self.selected_statement_line_ids)
+        if len_state == 1:
+            state = self.selected_statement_line_ids
+            for move in self.selected_move_line_ids:
+                move.move_line_id.write({
+                   'statement_line_id': state.statement_line_id.id,
+                   'statement_id': state.statement_line_id.statement_id.id
+                })
+                payment = move.move_line_id.payment_id
+                if payment:
+                    payment.write({
+                       'state': 'reconciled'
+                    })
+                self.write({'selected_move_line_ids': [(2, move.id, 0)]})
+            self.write(
+                {'selected_statement_line_ids': [(2, state.id, 0)]}
+            )
+        else:
+            count = 1
+            while count <= len_state:
+                statements = self.selected_statement_line_ids
+                moves = self.selected_move_line_ids
+                if statements[0].amount == moves[0].amount:
+                    statements[0].statement_line_id.write({
+                        'move_name': moves.move_line_id[0].name,
+                        'sequence': len(moves)
+                    })
+                    moves[0].move_line_id.write({
+                        'statement_line_id': statements[0].id,
+                        'statement_id': statements[0].statement_id.id
+                    })
+                    payment = moves[0].move_line_id.payment_id
+                    if payment:
+                        payment.write({
+                            'state': 'reconciled'
+                        })
+                    self.write({
+                        'selected_statement_line_ids': [(2, statements[0].id, 0)],
+                        'selected_move_line_ids': [(2, moves[0].id, 0)],
+                    })
+                    count += 1
+                else:
+                    raise UserError(_('The position are diferents'))
+
     def reconcile(self):
         for rec in self:
-            if len(rec.selected_statement_line_ids) > 1:
-                raise UserError(_('A selected move line was already reconciled.'))
+            count_statement = len(rec.selected_statement_line_ids)
+            count_moves = len(rec.selected_move_line_ids)
             sum_statement = sum(rec.selected_statement_line_ids.mapped('amount'))
             sum_move = sum(rec.selected_move_line_ids.mapped('amount'))
-            compare = float_compare(sum_statement, sum_move, precision_digits=5, precision_rounding=None)
+            if count_moves > 1 and count_statement == 0:
+                if sum_move == 0:
+                    return self.cancel_moves()
+                raise UserError(_('The difference in moves is not 0.'))
+            if count_statement > 1 and count_moves == 0:
+                if sum_statement == 0:
+                    return self.statement_reconcilie()
+                raise UserError(_('The difference in statements is not 0.'))
+            if count_statement > 1 and count_moves == 1:
+                return self.statement_reconcilie_move_update()
+            compare = float_compare(
+                sum_statement,
+                sum_move, precision_digits=5, precision_rounding=None
+            )
             if compare != 0:
                 difference = sum_statement - sum_move
                 context = rec._context.copy()
@@ -94,6 +214,7 @@ class AccountManualReconciliation(models.TransientModel):
                     'amount': difference,
                     'statement_lines': rec.selected_statement_line_ids[0].id,
                     'move_lines': rec.selected_move_line_ids.ids[0],
+                    'partner': False
                 })
                 for statement in rec.selected_statement_line_ids:
                     statement.statement_line_id.write({
@@ -111,19 +232,10 @@ class AccountManualReconciliation(models.TransientModel):
                         payment.write({
                             'state': 'reconciled'
                         })
-                return {
-                    'name': ('Manual Reconciliation'),
-                    'res_model': 'account.bank.reconciliation.difference.wizard',
-                    'view_mode': 'form',
-                    'view_id': self.env.ref(
-                        'account_manual_reconciliation.'
-                        'account_bank_reconciliation_difference_wizard_view'
-                    ).id,
-                    'context': context,
-                    'target': 'new',
-                    'type': 'ir.actions.act_window',
-                }
+                return self.call_wizard(context)
             stateme = rec.selected_statement_line_ids.statement_line_id[0]
+            if len(rec.selected_statement_line_ids) != 1 and len(rec.selected_move_line_ids) != 1:
+                return self.conciliaci()
             for statement in rec.selected_statement_line_ids:
                 statement.statement_line_id.write({
                     'move_name': rec.selected_move_line_ids.move_line_id[0].name,

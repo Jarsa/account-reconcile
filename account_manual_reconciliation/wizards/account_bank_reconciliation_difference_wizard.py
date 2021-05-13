@@ -37,13 +37,18 @@ class AccountBankReconciliationDifferenceWizard(models.TransientModel):
         if compare != 0:
             raise UserError(_('the amount is different, please checks amounts'))
         statement_line_id = self.statement_line_ids.statement_line_id
-        currency_id = statement_line_id.currency_id and statement_line_id.currency_id.id or self.env.company.currency_id.id
+        currency_id = (
+            statement_line_id.currency_id and
+            statement_line_id.currency_id.id or
+            self.env.company.currency_id.id
+        )
+        partner = statement_line_id.partner_id and statement_line_id.partner_id.id or False
         data = {
             'type': 'entry',
             'journal_id': statement_line_id.journal_id.id,
             'currency_id': currency_id,
             'date': statement_line_id.date,
-            'partner_id': statement_line_id.partner_id and statement_line_id.partner_id.id or False,
+            'partner_id': partner,
             'ref': statement_line_id.ref,
             'line_ids': [],
         }
@@ -55,7 +60,7 @@ class AccountBankReconciliationDifferenceWizard(models.TransientModel):
         data_payment = {
             'payment_method_id': payment_methods[0].id,
             'payment_type': self.amount > 0 and 'inbound' or 'outbound',
-            'partner_id': statement_line_id.partner_id.id,
+            'partner_id': partner,
             'partner_type': statement_line_id.account_id.user_type_id.name,
             'journal_id': statement_line_id.journal_id.id,
             'payment_date': statement_line_id.date,
@@ -63,7 +68,7 @@ class AccountBankReconciliationDifferenceWizard(models.TransientModel):
             'currency_id': currency_id,
             'amount': abs(self.amount),
             'communication': statement_line_id.ref,
-            'name': statement_line_id.name or _("Bank Statement %s") % statement_line_ids.date,
+            'name': statement_line_id.name or _("Bank Statement %s") % statement_line_id.date,
         }
         payment = self.env['account.payment'].create(data_payment)
         account_id = self.amount >= 0 \
@@ -71,7 +76,7 @@ class AccountBankReconciliationDifferenceWizard(models.TransientModel):
             or statement_line_id.statement_id.journal_id.default_debit_account_id.id
         data['line_ids'].append((0, 0, {
             'name': statement_line_id.name,
-            'partner_id': statement_line_id.partner_id and statement_line_id.partner_id.id or False,
+            'partner_id': partner,
             'account_id': account_id,
             'credit': self.amount < 0 and -self.amount or 0.0,
             'debit': self.amount > 0 and self.amount or 0.0,
@@ -82,7 +87,7 @@ class AccountBankReconciliationDifferenceWizard(models.TransientModel):
         for line in self.line_ids:
             data['line_ids'].append((0, 0, {
                 'name': line.name,
-                'partner_id': statement_line_id.partner_id and statement_line_id.partner_id.id or False,
+                'partner_id': partner,
                 'account_id': line.account_id.id,
                 'analytic_account_id': line.account_analytic_id.id,
                 'credit': line.amount > 0 and line.amount or 0.0,
@@ -111,6 +116,9 @@ class AccountBankReconciliationDifferenceLineWizard(models.TransientModel):
     reconciliation_id = fields.Many2one(
         'account.bank.reconciliation.difference.wizard',
         string='Journal Entry',
+    )
+    partner_id = fields.Many2one(
+        'res.partner'
     )
 
     @api.depends('account_id')
