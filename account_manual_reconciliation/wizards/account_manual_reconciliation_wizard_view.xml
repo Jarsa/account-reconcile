@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record model="ir.ui.view" id="account_manual_reconciliation_wizard_form">
+        <field name="name">account_manual_reconciliation.wizard.form</field>
+        <field name="model">account.manual.reconciliation.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="date"/>
+                        <field
+                            name="journal_id"
+                            domain="[
+                                ('type', '=', 'bank'),
+                                ('is_bank_account', '=', True),
+                            ]"
+                            options="{
+                                'no_create_edit': True,
+                            }"
+                            />
+                    </group>
+                </group>
+                <footer>
+                    <button
+                        type="object"
+                        name="action_reconciliation"
+                        string="Continue"
+                        class="oe_highlight"
+                    />
+                    <button
+                        string="Cancel"
+                        special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_account_manual_reconciliation_wizard" model="ir.actions.act_window">
+        <field name="name">account.manual.reconciliation.wizard</field>
+        <field name="res_model">account.manual.reconciliation.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+    <menuitem id="account_manual_reconciliation_wizard_menu" name="Manual Reconciliation" parent="account.menu_finance_entries_actions" action="action_account_manual_reconciliation_wizard"/>
+</odoo>
