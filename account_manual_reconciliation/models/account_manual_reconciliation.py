@@ -3,6 +3,7 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 from odoo.tools import float_compare
+from odoo.tools.float_utils import float_round
 
 
 class AccountManualReconciliation(models.TransientModel):
@@ -46,7 +47,8 @@ class AccountManualReconciliation(models.TransientModel):
         self.env.cr.execute("""
         SELECT
             absl.id AS statement_line_id,
-            COALESCE(absl.currency_id, company.currency_id) AS currency_id
+            COALESCE(absl.currency_id, company.currency_id) AS currency_id,
+            absl.partner_id
         FROM account_bank_statement_line AS absl
         LEFT JOIN account_move_line AS aml ON aml.statement_line_id = absl.id
         LEFT JOIN res_company AS company ON company.id = absl.company_id
@@ -54,7 +56,7 @@ class AccountManualReconciliation(models.TransientModel):
             absl.date <= %s AND
             absl.journal_id = %s AND
             aml.statement_line_id IS NULL
-        ORDER BY absl.amount
+        ORDER BY absl.amount DESC
 
         """, (date, journal_id))
         statement_lines = [(0, 0, line) for line in self.env.cr.dictfetchall()]
@@ -62,7 +64,8 @@ class AccountManualReconciliation(models.TransientModel):
         self.env.cr.execute("""
         SELECT
             aml.id AS move_line_id,
-            COALESCE(aml.currency_id, company.currency_id) AS currency_id
+            COALESCE(aml.currency_id, company.currency_id) AS currency_id,
+            aml.partner_id
         FROM account_move_line AS aml
         LEFT JOIN account_move AS am ON am.id = aml.move_id
         LEFT JOIN res_company AS company ON company.id = aml.company_id
@@ -71,7 +74,7 @@ class AccountManualReconciliation(models.TransientModel):
             aml.account_id = %s AND
             aml.statement_line_id IS NULL AND
             am.state = 'posted'
-        ORDER BY aml.balance
+        ORDER BY aml.balance DESC
 
         """, (date, journal.default_debit_account_id.id, ))
         move_line_ids = [(0, 0, line) for line in self.env.cr.dictfetchall()]
@@ -96,18 +99,22 @@ class AccountManualReconciliation(models.TransientModel):
 
     def cancel_moves(self):
         for move in self.selected_move_line_ids:
-            move.move_line_id.move_id.write({
-                'state': 'cancel'
-            })
-            self.write({'selected_move_line_ids': [(2, move.id, 0)]})
+            # move.move_line_id.move_id.write({
+            #    'state': 'cancel'
+            # })
+
+            move.move_line_id.payment_id.action_draft()
+            move.move_line_id.payment_id.cancel()
+            move.move_line_id.move_id.button_cancel()
+            # self.write({'selected_move_line_ids': [(2, move.id, 0)]})
+            move.unlink()
 
     def statement_reconcilie(self):
         for state in self.selected_statement_line_ids:
             context = self._context.copy()
             context.update({
                     'amount': state.amount,
-                    'statement_lines': state.id,
-                    'partner': True
+                    'statement_lines': self.selected_statement_line_ids.ids, #state.id,
                     # 'move_lines': state.selected_move_line_ids.ids[0],
                 })
             return {
@@ -192,15 +199,17 @@ class AccountManualReconciliation(models.TransientModel):
             count_statement = len(rec.selected_statement_line_ids)
             count_moves = len(rec.selected_move_line_ids)
             sum_statement = sum(rec.selected_statement_line_ids.mapped('amount'))
+            sum_statement = float_round(sum_statement, precision_digits=2,)
             sum_move = sum(rec.selected_move_line_ids.mapped('amount'))
+            sum_move = float_round(sum_move, precision_digits=2,)
             if count_moves > 1 and count_statement == 0:
-                if sum_move == 0:
+                if sum_move == 0.00:
                     return self.cancel_moves()
-                raise UserError(_('The difference in moves is not 0.'))
+                raise UserError(_('The difference in moves is not 0.', sum_move))
             if count_statement > 1 and count_moves == 0:
-                if sum_statement == 0:
+                if sum_statement == 0.00:
                     return self.statement_reconcilie()
-                raise UserError(_('The difference in statements is not 0.'))
+                raise UserError(_('The difference in statements is not 0.', sum_statement))
             if count_statement > 1 and count_moves == 1:
                 return self.statement_reconcilie_move_update()
             compare = float_compare(
@@ -212,9 +221,8 @@ class AccountManualReconciliation(models.TransientModel):
                 context = rec._context.copy()
                 context.update({
                     'amount': difference,
-                    'statement_lines': rec.selected_statement_line_ids[0].id,
-                    'move_lines': rec.selected_move_line_ids.ids[0],
-                    'partner': False
+                    'statement_lines': rec.selected_statement_line_ids.ids,
+                    'move_lines_ids': rec.selected_move_line_ids.ids
                 })
                 for statement in rec.selected_statement_line_ids:
                     statement.statement_line_id.write({
@@ -296,6 +304,9 @@ class AccounReconcileStatementLine(models.TransientModel):
     currency_id = fields.Many2one(
         comodel_name='res.currency',
     )
+    partner_id = fields.Many2one(
+        comodel_name='res.partner'
+    )
 
     def select_line(self):
         for rec in self:
@@ -304,6 +315,7 @@ class AccounReconcileStatementLine(models.TransientModel):
                 'selected_statement_line_ids': [(0, 0, {
                     'statement_line_id': rec.statement_line_id.id,
                     'currency_id': rec.currency_id.id,
+                    'partner_id': rec.partner_id.id,
                 })]
             })
 
@@ -344,6 +356,9 @@ class AccounReconcileMoveLine(models.TransientModel):
     currency_id = fields.Many2one(
         comodel_name='res.currency',
     )
+    partner_id = fields.Many2one(
+        comodel_name='res.partner'
+    )
 
     def select_line(self):
         for rec in self:
@@ -352,6 +367,7 @@ class AccounReconcileMoveLine(models.TransientModel):
                 'selected_move_line_ids': [(0, 0, {
                     'move_line_id': rec.move_line_id.id,
                     'currency_id': rec.currency_id.id,
+                    'partner_id': rec.partner_id.id,
                 })]
             })
 
@@ -361,6 +377,10 @@ class AccounReconcileStatementLineSelect(models.TransientModel):
     _inherit = 'account.reconciliation.statement.line'
     _description = 'Selected Statement Lines'
 
+    statement_line_difference_wizard = fields.Many2one(
+        'account.bank.reconciliation.difference.wizard'
+    )
+
     def select_line(self):
         for rec in self:
             rec.reconciliation_id.write({
@@ -368,6 +388,7 @@ class AccounReconcileStatementLineSelect(models.TransientModel):
                 'statement_line_ids': [(0, 0, {
                     'statement_line_id': rec.statement_line_id.id,
                     'currency_id': rec.currency_id.id,
+                    'partner_id': rec.partner_id.id,
                 })]
             })
 
@@ -377,6 +398,10 @@ class AccounReconcileMoveLineSelect(models.TransientModel):
     _inherit = 'account.reconciliation.move.line'
     _description = 'Selected Move Lines'
 
+    move_line_difference_wizard = fields.Many2one(
+        'account.bank.reconciliation.difference.wizard'
+    )
+
     def select_line(self):
         for rec in self:
             rec.reconciliation_id.write({
@@ -384,5 +409,6 @@ class AccounReconcileMoveLineSelect(models.TransientModel):
                 'move_line_ids': [(0, 0, {
                     'move_line_id': rec.move_line_id.id,
                     'currency_id': rec.currency_id.id,
+                    'partner_id': rec.partner_id.id,
                 })]
             })
