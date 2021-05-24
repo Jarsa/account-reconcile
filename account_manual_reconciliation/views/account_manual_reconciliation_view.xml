@@ -17,6 +17,7 @@
                                     <field name="date"/>
                                     <field name="ref" optional="hide"/>
                                     <field name="note" optional="hide"/>
+                                    <field name="partner_id" optional="hide"/>
                                     <field name="amount"/>
                                 </tree>
                             </field>
@@ -29,6 +30,7 @@
                                     <field name="date"/>
                                     <field name="ref" optional="hide"/>
                                     <field name="note" optional="hide"/>
+                                    <field name="partner_id" optional="hide"/>
                                     <field name="amount"/>
                                 </tree>
                             </field>
@@ -43,6 +45,7 @@
                                     <field name="date"/>
                                     <field name="ref" optional="hide"/>
                                     <field name="note" optional="hide"/>
+                                    <field name="partner_id" optional="hide"/>
                                     <field name="amount" sum="Total"/>
                                 </tree>
                             </field>
@@ -55,6 +58,7 @@
                                     <field name="date"/>
                                     <field name="ref" optional="hide"/>
                                     <field name="note" optional="hide"/>
+                                    <field name="partner_id" optional="hide"/>
                                     <field name="amount" sum="Total"/>
                                 </tree>
                             </field>
