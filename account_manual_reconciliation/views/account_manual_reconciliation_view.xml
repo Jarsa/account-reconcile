@@ -8,70 +8,82 @@
                 <header>
                     <button name="reconcile" string="Reconcile" type="object"/>
                 </header>
-                    <group colspan="2">
-                        <group string="Account Moves" colspan="1">
-                            <field name="move_line_ids" nolabel="1"  readonly="1">
-                                <tree editable="bottom">
-                                    <button name="select_line" string="Select" type="object" icon="fa-plus"/>
-                                    <field name="name"/>
-                                    <field name="date"/>
-                                    <field name="ref" optional="hide"/>
-                                    <field name="note" optional="hide"/>
-                                    <field name="partner_id" optional="hide"/>
-                                    <field name="amount"/>
-                                </tree>
-                            </field>
-                        </group>
-                        <group string="Statement Lines" colspan="1">
-                            <field name="statement_line_ids" nolabel="1"  readonly="1">
-                                <tree editable="bottom">
-                                    <button name="select_line" string="Select" type="object" icon="fa-plus"/>
-                                    <field name="name"/>
-                                    <field name="date"/>
-                                    <field name="ref" optional="hide"/>
-                                    <field name="note" optional="hide"/>
-                                    <field name="partner_id" optional="hide"/>
-                                    <field name="amount"/>
-                                </tree>
-                            </field>
-                        </group>
+                <div class="o_action_manager">
+                    <div class="o_action o_view_controller">
+                        <div class="o_content">
+                            <div class="o_form_view o_form_readonly">
+                                <div class="o_form_sheet_bg" style="height: 400px;">
+                                    <field name="move_line_ids" widget="section_and_note_one2many" mode="tree">
+                                        <tree editable="bottom" limit="5000">
+                                            <button name="select_line" string="Select" type="object" icon="fa-plus"/>
+                                            <field name="name"/>
+                                            <field name="date"/>
+                                            <field name="ref" optional="hide"/>
+                                            <field name="note" optional="hide"/>
+                                            <field name="partner_id" optional="hide"/>
+                                            <field name="amount"/>
+                                        </tree>
+                                    </field>
+                                </div> 
+                                <div class="o_form_sheet_bg" style="height: 400px;">
+                                    <field name="statement_line_ids" widget="section_and_note_one2many" mode="tree">
+                                        <tree editable="bottom" limit="5000">
+                                            <button name="select_line" string="Select" type="object" icon="fa-plus"/>
+                                            <field name="name"/>
+                                            <field name="date"/>
+                                            <field name="ref" optional="hide"/>
+                                            <field name="note" optional="hide"/>
+                                            <field name="partner_id" optional="hide"/>
+                                            <field name="amount"/>
+                                        </tree>
+                                    </field>
+                                </div> 
+                            </div>  
+                        </div>  
+                    </div>  
+                </div>
+                <group colspan="3">
+                    <group colspan="1">
+                        <field name="difference"/>
                     </group>
-                    <group class="col-12">
-                        <group string="Selected Account Moves" class="col-6">
-                            <field name="selected_move_line_ids" nolabel="1"  readonly="1">
-                                <tree editable="bottom">
-                                    <button name="select_line" string="Select" type="object" icon="fa-plus"/>
-                                    <field name="name"/>
-                                    <field name="date"/>
-                                    <field name="ref" optional="hide"/>
-                                    <field name="note" optional="hide"/>
-                                    <field name="partner_id" optional="hide"/>
-                                    <field name="amount" sum="Total"/>
-                                </tree>
-                            </field>
-                        </group>
-                        <group string="Selected Statement Lines" class="col-6">
-                            <field name="selected_statement_line_ids" nolabel="1"  readonly="1">
-                                <tree editable="bottom">
-                                    <button name="select_line" string="Select" type="object" icon="fa-plus"/>
-                                    <field name="name"/>
-                                    <field name="date"/>
-                                    <field name="ref" optional="hide"/>
-                                    <field name="note" optional="hide"/>
-                                    <field name="partner_id" optional="hide"/>
-                                    <field name="amount" sum="Total"/>
-                                </tree>
-                            </field>
-                        </group>
+                    <group colspan="1">
+                        <button name="reconcile" string="Reconcile" type="object"/>
                     </group>
-                    <group colspan="3">
-                        <group colspan="1">
-                            <field name="difference"/>
-                        </group>
-                        <group colspan="1">
-                            <button name="reconcile" string="Reconcile" type="object"/>
-                        </group>
-                    </group>
+                </group>
+                <div class="o_action_manager">
+                    <div class="o_action o_view_controller">
+                        <div class="o_content">
+                            <div class="o_form_view o_form_readonly">
+                                <div class="o_form_sheet_bg" style="height: 300px;">
+                                    <field name="selected_move_line_ids" widget="section_and_note_one2many" mode="tree">
+                                        <tree>
+                                            <button name="select_line" string="Select" type="object" icon="fa-plus"/>
+                                            <field name="name"/>
+                                            <field name="date"/>
+                                            <field name="ref" optional="hide"/>
+                                            <field name="note" optional="hide"/>
+                                            <field name="partner_id" optional="hide"/>
+                                            <field name="amount" sum="Total"/>
+                                        </tree>
+                                    </field>
+                                </div> 
+                                <div class="o_form_sheet_bg" style="height: 300px;">
+                                    <field name="selected_statement_line_ids" widget="section_and_note_one2many" mode="tree">
+                                        <tree>
+                                            <button name="select_line" string="Select" type="object" icon="fa-plus"/>
+                                            <field name="name"/>
+                                            <field name="date"/>
+                                            <field name="ref" optional="hide"/>
+                                            <field name="note" optional="hide"/>
+                                            <field name="partner_id" optional="hide"/>
+                                            <field name="amount" sum="Total"/>
+                                        </tree>
+                                    </field>
+                                </div> 
+                            </div>  
+                        </div>  
+                    </div>  
+                </div>
             </form>
         </field>
     </record>
