@@ -75,7 +75,6 @@ class AccountBankReconciliationDifferenceWizard(models.TransientModel):
                 and statement_line_id.statement_id.journal_id.default_credit_account_id.id \
                 or statement_line_id.statement_id.journal_id.default_debit_account_id.id
             data['line_ids'].append((0, 0, {
-                'name': statement_line_id.name,
                 'partner_id': partner,
                 'account_id': account_id,
                 'credit': self.amount < 0 and -self.amount or 0.0,
@@ -97,6 +96,7 @@ class AccountBankReconciliationDifferenceWizard(models.TransientModel):
                     'payment_id': payment.id
                 }))
             move = self.env['account.move'].with_context(default_journal_id=data['journal_id']).create(data)
+            move.action_post()
             state.unlink()
         self.move_lines_ids.unlink()
 
