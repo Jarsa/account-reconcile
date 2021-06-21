@@ -43,7 +43,6 @@ class AccountBankReconciliationDifferenceWizard(models.TransientModel):
             currency_id = statement_line_id.currency_id and statement_line_id.currency_id.id or self.env.company.currency_id.id
             partner = statement_line_id.partner_id and statement_line_id.partner_id.id or False
             data = {
-                'name': statement_line_id.name,
                 'type': 'entry',
                 'journal_id': statement_line_id.journal_id.id,
                 'currency_id': currency_id,
@@ -75,6 +74,7 @@ class AccountBankReconciliationDifferenceWizard(models.TransientModel):
                 and statement_line_id.statement_id.journal_id.default_credit_account_id.id \
                 or statement_line_id.statement_id.journal_id.default_debit_account_id.id
             data['line_ids'].append((0, 0, {
+                'name': statement_line_id.name,
                 'partner_id': partner,
                 'account_id': account_id,
                 'credit': self.amount < 0 and -self.amount or 0.0,
