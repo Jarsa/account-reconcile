@@ -53,12 +53,12 @@ class AccountManualReconciliation(models.TransientModel):
         LEFT JOIN account_move_line AS aml ON aml.statement_line_id = absl.id
         LEFT JOIN res_company AS company ON company.id = absl.company_id
         WHERE
-            absl.date <= %s AND
-            absl.journal_id = %s AND
+            absl.date <= %(date)s AND
+            absl.journal_id = %(journal_id)s AND
             aml.statement_line_id IS NULL
         ORDER BY absl.amount DESC
 
-        """, (date, journal_id))
+        """, {'date': date, 'journal_id': journal_id})
         statement_lines = [(0, 0, line) for line in self.env.cr.dictfetchall()]
 
         self.env.cr.execute("""
@@ -70,13 +70,18 @@ class AccountManualReconciliation(models.TransientModel):
         LEFT JOIN account_move AS am ON am.id = aml.move_id
         LEFT JOIN res_company AS company ON company.id = aml.company_id
         WHERE
-            aml.date <= %s AND
-            aml.account_id = %s AND
+            aml.date <= %(date)s AND
+            aml.account_id = %(account_id)s AND
             aml.statement_line_id IS NULL AND
-            am.state = 'posted'
+            am.state = 'posted' AND
+            am.journal_id = %(journal_id)s
         ORDER BY aml.balance DESC
 
-        """, (date, journal.default_debit_account_id.id, ))
+        """, {
+            'date': date,
+            'account_id': journal.default_debit_account_id.id,
+            'journal_id': journal_id,
+        })
         move_line_ids = [(0, 0, line) for line in self.env.cr.dictfetchall()]
 
         res['statement_line_ids'] = statement_lines
