@@ -1,0 +1,408 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* account_manual_reconciliation
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 13.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-08-15 14:40+0000\n"
+"PO-Revision-Date: 2021-08-15 09:43-0500\n"
+"Last-Translator: Jesús Alan Ramos Rodríguez <alan.ramos@jarsa.com.mx>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: es\n"
+"X-Generator: Poedit 3.0\n"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_bank_reconciliation_difference_line_wizard__account_id
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_bank_reconciliation_difference_wizard__account_id
+msgid "Account"
+msgstr "Cuenta"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_bank_reconciliation_difference_line_wizard__account_analytic_id
+msgid "Account Analytic"
+msgstr "Cuenta Analítica"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_bank_reconciliation_difference_line_wizard__amount
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_bank_reconciliation_difference_wizard__amount
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line__amount
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line_select__amount
+msgid "Amount"
+msgstr "Monto"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line__amount
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line_select__amount
+msgid "Balance"
+msgstr "Balance"
+
+#. module: account_manual_reconciliation
+#: code:addons/Github/13.0/account-reconcile/account_manual_reconciliation/wizards/account_bank_reconciliation_difference_wizard.py:0
+#: code:addons/account_manual_reconciliation/wizards/account_bank_reconciliation_difference_wizard.py:0
+#, python-format
+msgid "Bank Statement %s"
+msgstr "Extracto bancario %s"
+
+#. module: account_manual_reconciliation
+#: model_terms:ir.ui.view,arch_db:account_manual_reconciliation.account_bank_reconciliation_difference_wizard_view
+#: model_terms:ir.ui.view,arch_db:account_manual_reconciliation.account_manual_reconciliation_wizard_form
+msgid "Cancel"
+msgstr "Cancelado"
+
+#. module: account_manual_reconciliation
+#: model_terms:ir.ui.view,arch_db:account_manual_reconciliation.account_manual_reconciliation_wizard_form
+msgid "Continue"
+msgstr "Continuar"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_bank_reconciliation_difference_line_wizard__create_uid
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_bank_reconciliation_difference_wizard__create_uid
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_manual_reconciliation__create_uid
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_manual_reconciliation_wizard__create_uid
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line__create_uid
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line_select__create_uid
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line__create_uid
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line_select__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_bank_reconciliation_difference_line_wizard__create_date
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_bank_reconciliation_difference_wizard__create_date
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_manual_reconciliation__create_date
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_manual_reconciliation_wizard__create_date
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line__create_date
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line_select__create_date
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line__create_date
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line_select__create_date
+msgid "Created on"
+msgstr "Creado en"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line__currency_id
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line_select__currency_id
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line__currency_id
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line_select__currency_id
+msgid "Currency"
+msgstr "Moneda"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_manual_reconciliation_wizard__date
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line__date
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line_select__date
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line__date
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line_select__date
+msgid "Date"
+msgstr "Fecha"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_manual_reconciliation__difference
+msgid "Difference"
+msgstr "Diferencia"
+
+#. module: account_manual_reconciliation
+#: model_terms:ir.ui.view,arch_db:account_manual_reconciliation.account_bank_reconciliation_difference_wizard_view
+msgid "Difference Reconcilie"
+msgstr "Conciliación de diferencias"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_bank_reconciliation_difference_line_wizard__display_name
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_bank_reconciliation_difference_wizard__display_name
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_manual_reconciliation__display_name
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_manual_reconciliation_wizard__display_name
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line__display_name
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line_select__display_name
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line__display_name
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line_select__display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_bank_reconciliation_difference_line_wizard__id
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_bank_reconciliation_difference_wizard__id
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_manual_reconciliation__id
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_manual_reconciliation_wizard__id
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line__id
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line_select__id
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line__id
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line_select__id
+msgid "ID"
+msgstr "Identificación"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line__note
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line_select__note
+msgid "Internal Note"
+msgstr "Nota interna"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_manual_reconciliation_wizard__journal_id
+msgid "Journal"
+msgstr "Diario"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_bank_reconciliation_difference_line_wizard__reconciliation_id
+msgid "Journal Entry"
+msgstr "Asiento contable"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_bank_reconciliation_difference_wizard__line_ids
+msgid "Journal Items"
+msgstr "Apuntes contables"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line__name
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line_select__name
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line__name
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line_select__name
+msgid "Label"
+msgstr "Etiqueta"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_bank_reconciliation_difference_line_wizard____last_update
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_bank_reconciliation_difference_wizard____last_update
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_manual_reconciliation____last_update
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_manual_reconciliation_wizard____last_update
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line____last_update
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line_select____last_update
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line____last_update
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line_select____last_update
+msgid "Last Modified on"
+msgstr "Última modificación el"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_bank_reconciliation_difference_line_wizard__write_uid
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_bank_reconciliation_difference_wizard__write_uid
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_manual_reconciliation__write_uid
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_manual_reconciliation_wizard__write_uid
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line__write_uid
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line_select__write_uid
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line__write_uid
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line_select__write_uid
+msgid "Last Updated by"
+msgstr "Última modificación por..."
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_bank_reconciliation_difference_line_wizard__write_date
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_bank_reconciliation_difference_wizard__write_date
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_manual_reconciliation__write_date
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_manual_reconciliation_wizard__write_date
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line__write_date
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line_select__write_date
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line__write_date
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line_select__write_date
+msgid "Last Updated on"
+msgstr "Última modificación en..."
+
+#. module: account_manual_reconciliation
+#: code:addons/Github/13.0/account-reconcile/account_manual_reconciliation/models/account_manual_reconciliation.py:0
+#: code:addons/Github/13.0/account-reconcile/account_manual_reconciliation/wizards/account_manual_reconciliation_wizard.py:0
+#: code:addons/account_manual_reconciliation/models/account_manual_reconciliation.py:0
+#: code:addons/account_manual_reconciliation/wizards/account_manual_reconciliation_wizard.py:0
+#: model:ir.ui.menu,name:account_manual_reconciliation.account_manual_reconciliation_wizard_menu
+#, python-format
+msgid "Manual Reconciliation"
+msgstr "Conciliación manual"
+
+#. module: account_manual_reconciliation
+#: model:ir.model,name:account_manual_reconciliation.model_account_bank_reconciliation_difference_wizard
+msgid "Manual Reconciliation Difference Wizard"
+msgstr "Asistente de diferencia de conciliación manual"
+
+#. module: account_manual_reconciliation
+#: model:ir.model,name:account_manual_reconciliation.model_account_bank_reconciliation_difference_line_wizard
+msgid "Manual Reconciliation Line Difference Wizard"
+msgstr "Asistente de diferencia de línea de conciliación manual"
+
+#. module: account_manual_reconciliation
+#: model:ir.model,name:account_manual_reconciliation.model_account_manual_reconciliation
+msgid "Manual Reconciliation Model"
+msgstr "Modelo de reconciliación manual"
+
+#. module: account_manual_reconciliation
+#: model:ir.model,name:account_manual_reconciliation.model_account_manual_reconciliation_wizard
+msgid "Manual Reconciliation Wizard"
+msgstr "Asistente de conciliación manual"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_manual_reconciliation__move_line_ids
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line__move_line_id
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line_select__move_line_id
+msgid "Move Line"
+msgstr "Línea de movimiento"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line_select__move_line_difference_wizard
+msgid "Move Line Difference Wizard"
+msgstr "Asistente para mover diferencia de línea"
+
+#. module: account_manual_reconciliation
+#: model:ir.model,name:account_manual_reconciliation.model_account_reconciliation_move_line
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_bank_reconciliation_difference_wizard__move_lines_ids
+msgid "Move Lines"
+msgstr "Líneas de Movimientos"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_bank_reconciliation_difference_line_wizard__name
+msgid "Name"
+msgstr "Nombre"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,help:account_manual_reconciliation.field_account_reconciliation_move_line__note
+#: model:ir.model.fields,help:account_manual_reconciliation.field_account_reconciliation_move_line_select__note
+msgid ""
+"Note you can set through the customer statement about a receivable journal "
+"item"
+msgstr ""
+"Ten en cuenta que puedes especificar en el estado de cuenta del cliente un "
+"apunte contable por cobrar"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line__note
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line_select__note
+msgid "Notes"
+msgstr "Notas"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_bank_reconciliation_difference_line_wizard__partner_id
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line__partner_id
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line_select__partner_id
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line__partner_id
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line_select__partner_id
+msgid "Partner"
+msgstr "Cliente"
+
+#. module: account_manual_reconciliation
+#: model_terms:ir.ui.view,arch_db:account_manual_reconciliation.account_manual_reconciliation_form
+msgid "Reconcile"
+msgstr "Conciliar"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line__reconciliation_id
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line_select__reconciliation_id
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line__reconciliation_id
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line_select__reconciliation_id
+msgid "Reconciliation"
+msgstr "Conciliación"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line__ref
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_move_line_select__ref
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line__ref
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line_select__ref
+msgid "Reference"
+msgstr "Referencia"
+
+#. module: account_manual_reconciliation
+#: model_terms:ir.ui.view,arch_db:account_manual_reconciliation.account_manual_reconciliation_form
+msgid "Select"
+msgstr "Seleccionar"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_manual_reconciliation__selected_move_line_ids
+msgid "Selected Move Line"
+msgstr "Línea de movimiento seleccionada"
+
+#. module: account_manual_reconciliation
+#: model:ir.model,name:account_manual_reconciliation.model_account_reconciliation_move_line_select
+msgid "Selected Move Lines"
+msgstr "Líneas de movimiento seleccionadas"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_manual_reconciliation__selected_statement_line_ids
+msgid "Selected Statement Line"
+msgstr "Línea de estado de cuenta seleccionada"
+
+#. module: account_manual_reconciliation
+#: model:ir.model,name:account_manual_reconciliation.model_account_reconciliation_statement_line_select
+msgid "Selected Statement Lines"
+msgstr "Líneas de estado de cuenta seleccionadas"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_manual_reconciliation__statement_line_ids
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line__statement_line_id
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line_select__statement_line_id
+msgid "Statement Line"
+msgstr "Línea de estado de cuenta"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_reconciliation_statement_line_select__statement_line_difference_wizard
+msgid "Statement Line Difference Wizard"
+msgstr "Asistente de diferencia de línea de declaración"
+
+#. module: account_manual_reconciliation
+#: model:ir.model,name:account_manual_reconciliation.model_account_reconciliation_statement_line
+#: model:ir.model.fields,field_description:account_manual_reconciliation.field_account_bank_reconciliation_difference_wizard__statement_lines_ids
+msgid "Statement Lines"
+msgstr "Líneas de estado de cuenta"
+
+#. module: account_manual_reconciliation
+#: model:ir.model.fields,help:account_manual_reconciliation.field_account_reconciliation_move_line__amount
+#: model:ir.model.fields,help:account_manual_reconciliation.field_account_reconciliation_move_line_select__amount
+msgid ""
+"Technical field holding the debit - credit in order to open meaningful "
+"graph views from reports"
+msgstr ""
+"Campo técnico que contiene el débito - crédito para abrir vistas gráficas "
+"significativas de los informes"
+
+#. module: account_manual_reconciliation
+#: code:addons/Github/13.0/account-reconcile/account_manual_reconciliation/wizards/account_bank_reconciliation_difference_wizard.py:0
+#: code:addons/account_manual_reconciliation/wizards/account_bank_reconciliation_difference_wizard.py:0
+#, python-format
+msgid "The amount is different, please checks amounts"
+msgstr "El monto es diferente, verifique los montos"
+
+#. module: account_manual_reconciliation
+#: code:addons/Github/13.0/account-reconcile/account_manual_reconciliation/models/account_manual_reconciliation.py:0
+#: code:addons/account_manual_reconciliation/models/account_manual_reconciliation.py:0
+#, python-format
+msgid "The difference in moves is not 0."
+msgstr "La diferencia de movimientos no es 0."
+
+#. module: account_manual_reconciliation
+#: code:addons/Github/13.0/account-reconcile/account_manual_reconciliation/models/account_manual_reconciliation.py:0
+#: code:addons/account_manual_reconciliation/models/account_manual_reconciliation.py:0
+#, python-format
+msgid "The difference in statements is not 0."
+msgstr "La diferencia en las declaraciones no es 0."
+
+#. module: account_manual_reconciliation
+#: code:addons/Github/13.0/account-reconcile/account_manual_reconciliation/models/account_manual_reconciliation.py:0
+#: code:addons/account_manual_reconciliation/models/account_manual_reconciliation.py:0
+#, python-format
+msgid "The position are diferents"
+msgstr "Las posiciones son diferentes"
+
+#. module: account_manual_reconciliation
+#: model_terms:ir.ui.view,arch_db:account_manual_reconciliation.account_manual_reconciliation_form
+msgid "Total"
+msgstr "Total"
+
+#. module: account_manual_reconciliation
+#: code:addons/Github/13.0/account-reconcile/account_manual_reconciliation/wizards/account_bank_reconciliation_difference_wizard.py:0
+#: code:addons/account_manual_reconciliation/wizards/account_bank_reconciliation_difference_wizard.py:0
+#, python-format
+msgid "You need to define at least one line."
+msgstr "Necesita definir al menos una línea."
+
+#. module: account_manual_reconciliation
+#: model:ir.actions.act_window,name:account_manual_reconciliation.account_bank_reconciliation_difference_wizard_wizard
+msgid "account.bank.reconciliation.difference.wizard"
+msgstr "account.bank.reconciliation.difference.wizard"
+
+#. module: account_manual_reconciliation
+#: model:ir.actions.act_window,name:account_manual_reconciliation.action_account_manual_reconciliation
+msgid "account.manual.reconciliation"
+msgstr "account.manual.reconciliation"
+
+#. module: account_manual_reconciliation
+#: model:ir.actions.act_window,name:account_manual_reconciliation.action_account_manual_reconciliation_wizard
+msgid "account.manual.reconciliation.wizard"
+msgstr "account.manual.reconciliation.wizard"
