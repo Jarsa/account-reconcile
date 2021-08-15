@@ -5,6 +5,7 @@ from odoo import _, fields, models
 
 class AccountManualReconciliationWizard(models.TransientModel):
     _name = 'account.manual.reconciliation.wizard'
+    _description = 'Manual Reconciliation Wizard'
 
     date = fields.Date(
         required=True,
