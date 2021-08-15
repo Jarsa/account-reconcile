@@ -106,7 +106,6 @@ class AccountManualReconciliation(models.TransientModel):
     def _statement_reconcile(self):
         self.ensure_one()
         context = {
-            'amount': self.selected_statement_line_ids.mapped('amount')[0],
             'statement_lines': self.selected_statement_line_ids.ids,
         }
         return self._action_difference_wizard(context)

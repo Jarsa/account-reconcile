@@ -23,11 +23,14 @@ class AccountBankReconciliationDifferenceWizard(models.TransientModel):
         'reconciliation_id',
         string='Journal Items',
     )
+    account_id = fields.Many2one(
+        comodel_name="account.account",
+    )
 
     @api.model
     def default_get(self, fields_list):
         res = super().default_get(fields_list)
-        res["amount"] = self._context.get('amount')
+        res["amount"] = self._context.get('amount', 0)
         res["statement_lines_ids"] = self._context.get('statement_lines')
         res["move_lines_ids"] = self._context.get('move_lines_ids')
         return res
@@ -35,7 +38,7 @@ class AccountBankReconciliationDifferenceWizard(models.TransientModel):
     def action_difference_reconciliation(self):
         for selected_line in self.statement_lines_ids:
             sum_move = sum(self.line_ids.mapped('amount'))
-            if not self.line_ids:
+            if not self.line_ids and self.amount:
                 raise UserError(_('You need to define at least one line.'))
             compare = float_compare(self.amount, sum_move, precision_digits=5)
             if compare != 0:
@@ -45,6 +48,7 @@ class AccountBankReconciliationDifferenceWizard(models.TransientModel):
                 statement_line.currency_id.id if
                 statement_line.currency_id else self.env.company.currency_id.id)
             partner_id = statement_line.partner_id.id if statement_line.partner_id else False
+            amount = self.amount if self.amount else selected_line.amount
             move_dict = {
                 'type': 'entry',
                 'journal_id': statement_line.journal_id.id,
@@ -56,38 +60,49 @@ class AccountBankReconciliationDifferenceWizard(models.TransientModel):
             }
             payment_methods = (
                 statement_line.journal_id.inbound_payment_method_ids if
-                (self.amount > 0) else
+                (amount > 0) else
                 statement_line.journal_id.outbound_payment_method_ids
             )
             data_payment = {
                 'payment_method_id': payment_methods[0].id,
-                'payment_type': 'inbound' if self.amount else 'outbound',
+                'payment_type': 'inbound' if amount > 0 else 'outbound',
                 'partner_id': partner_id,
                 'partner_type': statement_line.account_id.user_type_id.name,
                 'journal_id': statement_line.journal_id.id,
                 'payment_date': statement_line.date,
                 'state': 'reconciled',
                 'currency_id': currency_id,
-                'amount': abs(self.amount),
+                'amount': abs(amount),
                 'communication': statement_line.ref,
                 'name': statement_line.name or _("Bank Statement %s") % statement_line.date,
             }
             payment = self.env['account.payment'].create(data_payment)
             account_id = (
                 statement_line.statement_id.journal_id.default_credit_account_id.id if
-                self.amount >= 0
+                amount >= 0
                 else statement_line.statement_id.journal_id.default_debit_account_id.id)
             move_dict['line_ids'].append((0, 0, {
                 'name': statement_line.name,
                 'partner_id': partner_id,
                 'account_id': account_id,
-                'credit': abs(self.amount) if self.amount else 0.0,
-                'debit': self.amount if self.amount > 0 else 0.0,
+                'credit': abs(amount) if amount < 0 else 0.0,
+                'debit': amount if amount > 0 else 0.0,
                 'statement_line_id': statement_line.id,
                 'statement_id': statement_line.statement_id.id,
-                'x': payment.id,
+                'payment_id': payment.id,
             }))
-            for line in self.line_ids:
+            if not self.amount:
+                move_dict['line_ids'].append((0, 0, {
+                    'name': statement_line.name,
+                    'partner_id': partner_id,
+                    'account_id': self.account_id.id,
+                    'credit': amount if amount > 0 else 0.0,
+                    'debit': abs(amount) if amount < 0 else 0.0,
+                    'statement_line_id': statement_line.id,
+                    'statement_id': statement_line.statement_id.id,
+                    'payment_id': payment.id,
+                }))
+            for line in self.line_ids and self.amount:
                 move_dict['line_ids'].append((0, 0, {
                     'name': line.name,
                     'partner_id': partner_id,
