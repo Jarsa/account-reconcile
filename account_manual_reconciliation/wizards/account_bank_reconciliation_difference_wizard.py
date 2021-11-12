@@ -102,18 +102,19 @@ class AccountBankReconciliationDifferenceWizard(models.TransientModel):
                     'statement_id': statement_line.statement_id.id,
                     'payment_id': payment.id,
                 }))
-            for line in self.line_ids and self.amount:
-                move_dict['line_ids'].append((0, 0, {
-                    'name': line.name,
-                    'partner_id': partner_id,
-                    'account_id': line.account_id.id,
-                    'analytic_account_id': line.account_analytic_id.id,
-                    'credit': line.amount if line.amount > 0 else 0.0,
-                    'debit': abs(line.amount) if line.amount else 0.0,
-                    'statement_line_id': statement_line.id,
-                    'statement_id': statement_line.statement_id.id,
-                    'payment_id': payment.id,
-                }))
+            else:
+                for line in self.line_ids:
+                    move_dict['line_ids'].append((0, 0, {
+                        'name': line.name,
+                        'partner_id': partner_id,
+                        'account_id': line.account_id.id,
+                        'analytic_account_id': line.account_analytic_id.id,
+                        'credit': line.amount if line.amount > 0 else 0.0,
+                        'debit': abs(line.amount) if line.amount else 0.0,
+                        'statement_line_id': statement_line.id,
+                        'statement_id': statement_line.statement_id.id,
+                        'payment_id': payment.id,
+                    }))
             move = self.env['account.move'].with_context(
                 default_journal_id=move_dict['journal_id']).create(move_dict)
             move.action_post()
