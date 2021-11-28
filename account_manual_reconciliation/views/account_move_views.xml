@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_move_line_tree_grouped_account" model="ir.ui.view">
+        <field name="name">account.move.line.view.form.inherit</field>
+        <field name="model">account.move.line</field>
+        <field name="inherit_id" ref="account.view_move_line_tree_grouped"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='tag_ids']" position="after">
+                <field name="statement_line_id" invisible="1"/>
+                <button name="show_reconciled_moves" attrs="{'invisible': [('statement_line_id', '=', False)]}" string="Show related expense line" type="object" icon="fa-link"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -11,6 +11,8 @@
     "category": "Finance",
     "data": [
         "views/account_manual_reconciliation_view.xml",
+        "views/account_bank_statement_views.xml",
+        "views/account_move_views.xml",
         "wizards/account_manual_reconciliation_wizard_view.xml",
         "wizards/account_bank_reconciliation_difference_wizard_view.xml",
     ],
