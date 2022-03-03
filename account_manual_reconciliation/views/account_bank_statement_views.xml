@@ -6,7 +6,7 @@
         <field name="inherit_id" ref="account.view_bank_statement_form"/>
         <field name="arch" type="xml">
             <xpath expr="//button[@name='button_cancel_reconciliation']" position="after">
-                <button name="show_related_statement_line" attrs="{'invisible': ['|',('journal_entry_ids', '=', []), ('state', '=', 'confirm')]}" string="Show related lines" type="object" icon="fa-link"/>
+                <button name="show_reconciled_moves" attrs="{'invisible': ['|',('journal_entry_ids', '=', []), ('state', '=', 'confirm')]}" string="Show related lines" type="object" icon="fa-link"/>
             </xpath>
         </field>
     </record>

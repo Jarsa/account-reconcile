@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='tag_ids']" position="after">
                 <field name="statement_line_id" invisible="1"/>
-                <button name="show_reconciled_moves" attrs="{'invisible': [('statement_line_id', '=', False)]}" string="Show related expense line" type="object" icon="fa-link"/>
+                <button name="show_related_statement_line" attrs="{'invisible': [('statement_line_id', '=', False)]}" string="Show related expense line" type="object" icon="fa-link"/>
             </xpath>
         </field>
     </record>
